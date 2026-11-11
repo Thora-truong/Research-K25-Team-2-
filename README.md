@@ -1,27 +1,6 @@
 # Research-K25-Team-2
 This study examines how many distribution centers (DCs) an Australian retailer should open, and where, to balance transport cost, delivery distance, and inventory. Opening more DCs brings products closer to branches, but it also increases total inventory, so the goal is a reasonable balance rather than the minimum of any single measure. We use and compare two methods, a fast heuristic and an exact mixed-integer linear programming (MILP) model, to see how close the heuristic gets to the optimal solution. We also test whether the recommended network stays stable when key assumptions change.
 
-## Data Model
-### 1. Star Schema
-[Insert Mermaid Diagram]
-
-### 2. Fact Tables
-- Fact_Branch_Demand
-- Fact_Distance_Cost
-- Fact_Optimization
-
-### 3. Dimension Tables
-- Dim_Branch
-- Dim_Geography
-- Dim_Candidate_DC
-- Dim_Cost_Curve
-- Dim_Scenario
-- Dim_Method
-- Dim_Optimization_Run
-
-### 4. Data Granularity
-Explain the grain of each fact table.
-
 ## Flowchart
 ```mermaid
 %%{init: {
