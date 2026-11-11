@@ -3,13 +3,36 @@ This study examines how many distribution centers (DCs) an Australian retailer s
 
 Here is the flowchart of report: 
 ```mermaid
+%%{init: {
+  "theme": "base",
+  "themeVariables": {
+    "fontFamily": "Inter, Segoe UI, Helvetica, Arial, sans-serif",
+    "fontSize": "16px",
+    "lineColor": "#64748b"
+  },
+  "flowchart": { "wrappingWidth": 520, "nodeSpacing": 40, "rankSpacing": 45, "padding": 18 }
+}}%%
 flowchart TD
-    A["1. Raw data<br/>635 branches, demand, cost curves"]
-    B["2. Clean data and build inputs<br/>demand per branch, 88 candidate DCs,<br/>distances, delivery costs"]
-    C["3. Choose K DCs (K = 1 to 6)<br/>MILP (exact) vs Heuristic (fast)"]
-    D["4. Evaluate both with the same formulas<br/>cost, distance, coverage, runtime"]
-    E["5. Test 7 changed assumptions<br/>cost, demand, distance, state mapping"]
-    F["6. Conclusion<br/>how many DCs, where, and how stable"]
+    A["<b>1. Raw data</b><br/>635 branches, demand, cost curves"]
+    B["<b>2. Clean data and build inputs</b><br/>Demand per branch, 88 candidate DCs, distances, delivery costs"]
+    C["<b>3. Choose K DCs (K = 1 to 6)</b><br/>MILP (exact) vs Heuristic (fast)"]
+    D["<b>4. Evaluate both with the same formulas</b><br/>Cost, distance, coverage, runtime"]
+    E["<b>5. Test 7 changed assumptions</b><br/>Cost, demand, distance, state mapping"]
+    F["<b>6. Conclusion</b><br/>How many DCs, where, and how stable"]
 
     A --> B --> C --> D --> E --> F
+
+    classDef s1 fill:#e0f2fe,stroke:#0284c7,stroke-width:2px,color:#0c4a6e;
+    classDef s2 fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d;
+    classDef s3 fill:#fef9c3,stroke:#ca8a04,stroke-width:2px,color:#713f12;
+    classDef s4 fill:#ffedd5,stroke:#ea580c,stroke-width:2px,color:#7c2d12;
+    classDef s5 fill:#fae8ff,stroke:#c026d3,stroke-width:2px,color:#701a75;
+    classDef s6 fill:#fee2e2,stroke:#dc2626,stroke-width:2px,color:#7f1d1d;
+
+    class A s1
+    class B s2
+    class C s3
+    class D s4
+    class E s5
+    class F s6
 ```
