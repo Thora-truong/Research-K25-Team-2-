@@ -3,71 +3,41 @@ This study examines how many distribution centers (DCs) an Australian retailer s
 
 # Data Model
 ```mermaid
-%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Inter, Segoe UI, Arial, sans-serif", "fontSize": "14px"}}}%%
+%%{init: {"theme": "base", "themeVariables": {
+  "fontFamily": "Inter, Segoe UI, Arial, sans-serif",
+  "fontSize": "15px",
+  "primaryColor": "#eef2ff",
+  "primaryBorderColor": "#6366f1",
+  "primaryTextColor": "#1e1b4b",
+  "lineColor": "#64748b"
+}}}%%
 erDiagram
-    OUTBOUND_RAW {
-        string DestinationRef FK
-        string GroupID
-        string Section
-        float  KG
-        float  CBM
-    }
-    BRANCH_MASTER_RAW {
-        string DestinationRef PK
-        string ShipToID
-        string SA4
-        string State
-        float  Latitude
-        float  Longitude
-    }
-    COST_CURVE_RAW {
-        string State
-        string Mode
-        float  Intercept
-        float  Slope
-        float  MinKM
-        float  MaxKM
-    }
-    CURRENT_SCENARIO_RAW {
-        string Facility PK
-        float  Latitude
-        float  Longitude
-        float  AvgInventoryCBM
-        float  StorageRate
-        float  HandlingRate
-    }
-
-    BRANCH_DEMAND {
-        string DestinationRef PK
-        float  total_cbm
-        float  total_kg
-        string State
-        bool   missing_sa4_flag
-        bool   candidate_base_flag
-    }
-    CANDIDATE {
-        string dc_id PK
-        string State
-        float  Latitude
-        float  Longitude
-    }
-
-    DISTANCE {
-        string branch_id PK, FK
-        string dc_id PK, FK
-        float  distance_km
-    }
-    COST {
-        string branch_id PK, FK
-        string dc_id PK, FK
-        float  lane_cost
-    }
-    SCENARIO {
+    dim_scenario {
         string scenario_id PK
         string description
     }
-
-    RUN {
+    dim_branch {
+        string branch_id PK
+        string state
+        string sa4
+        float  total_cbm
+        float  total_kg
+    }
+    dim_candidate {
+        string dc_id PK
+        string state
+        float  lat
+        float  lon
+    }
+    dim_cost_curve {
+        string state
+        string mode
+        float  intercept
+        float  slope
+        float  min_km
+        float  max_km
+    }
+    fact_runs {
         string run_id PK
         string scenario_id FK
         string method
@@ -75,38 +45,32 @@ erDiagram
         float  delivery_cost
         float  storage_cost
         float  handling_cost
-        float  total_modeled_cost
-        float  weighted_mean_km
-        float  weighted_p95_km
-        float  coverage_250
-        float  coverage_500
-        float  runtime_seconds
-        string solver_status
-        float  heuristic_gap_pct
+        float  total_cost
+        float  mean_km
+        float  p95_km
+        float  coverage_250_500
+        float  runtime_sec
+        float  gap_pct
     }
-    FACILITY_OPEN {
-        string run_id PK, FK
-        string dc_id PK, FK
-    }
-    ASSIGNMENT {
-        string run_id PK, FK
-        string branch_id PK, FK
+    fact_assignments {
+        string run_id FK
+        string branch_id FK
         string dc_id FK
     }
+    fact_lane_cost {
+        string branch_id FK
+        string dc_id FK
+        float  distance_km
+        float  lane_cost
+    }
 
-    OUTBOUND_RAW }o--|| BRANCH_MASTER_RAW : "aggregate by DestinationRef"
-    BRANCH_MASTER_RAW ||--|| BRANCH_DEMAND : "join + sum"
-    BRANCH_DEMAND ||--o| CANDIDATE : "largest CBM per SA4"
-    CURRENT_SCENARIO_RAW ||--o| CANDIDATE : "add NSW-DC01"
-    BRANCH_DEMAND ||--o{ DISTANCE : "from"
-    CANDIDATE ||--o{ DISTANCE : "to"
-    DISTANCE ||--|| COST : "apply cost curve"
-    COST_CURVE_RAW ||--o{ COST : "by DC state"
-    SCENARIO ||--o{ RUN : "has"
-    RUN ||--o{ FACILITY_OPEN : "opens"
-    RUN ||--o{ ASSIGNMENT : "assigns"
-    CANDIDATE ||--o{ FACILITY_OPEN : "is"
-    BRANCH_DEMAND ||--o{ ASSIGNMENT : "served"
+    dim_scenario  ||--o{ fact_runs        : "1 scenario, many runs"
+    fact_runs     ||--o{ fact_assignments : "1 run, 635 branches"
+    dim_branch    ||--o{ fact_assignments : ""
+    dim_candidate ||--o{ fact_assignments : ""
+    dim_branch    ||--o{ fact_lane_cost   : ""
+    dim_candidate ||--o{ fact_lane_cost   : ""
+    dim_cost_curve }o..o{ dim_candidate   : "curve by DC state"
 ```
 
 # Flowchart
